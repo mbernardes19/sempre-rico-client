@@ -18,7 +18,6 @@ export default class UserDao extends GenericDao<UserDto> {
     }
 
     async getAllUsersIds(): Promise<UserIdDto[]> {
-        console.log(this._connection)
         const [res] = await this._connection.query<UserIdDto[]>(`SELECT id FROM Usuario`);
         return res;
     }
