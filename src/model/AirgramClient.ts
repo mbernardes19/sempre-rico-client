@@ -1,6 +1,8 @@
 import TelegramClient from "./TelegramClient";
-import { Airgram, Auth } from "airgram";
+import { Airgram, Auth, ChatMember } from "airgram";
 import { TelegramChatMember } from "./Telegram";
+import { fromUnixTime } from 'date-fns';
+
 
 export default class AirgramClient implements TelegramClient {
     private _airgram: Airgram;
@@ -23,7 +25,10 @@ export default class AirgramClient implements TelegramClient {
         await this.findChats();
         const res = await this._airgram.api.getSupergroupMembers({supergroupId: channelId, limit: 100})
         if (res.response._ === 'chatMembers') {
-            return res.response.members.map(member => ({ userId: member.userId }))
+            return res.response.members.map(member => {
+                console.log(member.userId, member.joinedChatDate)
+                return { userId: member.userId, joinedIn: member.joinedChatDate !== 0 ? fromUnixTime(member.joinedChatDate) : null }
+            })
         } else {
             console.log(res.response.message)
         }
@@ -47,6 +52,13 @@ export default class AirgramClient implements TelegramClient {
             return res.response.title
         } else {
             console.log(res.response.message);
+        }
+    }
+
+    async getChatMember(userId: number, chatId: number): Promise<TelegramChatMember> {
+        const res = await this._airgram.api.getChatMember({chatId: chatId, userId: userId})
+        if (res.response._ === 'chatMember') {
+            return { userId: res.response.userId, joinedIn: res.response.joinedChatDate !== 0 ? fromUnixTime(res.response.joinedChatDate) : null}
         }
     }
 }
