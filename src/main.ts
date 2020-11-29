@@ -1,13 +1,13 @@
 import express from 'express'
 import { handleDisconnect, connection } from './db';
-import AirgramClient from './src/model/AirgramClient';
-import UserMapper from './src/mappers/UserMapper';
-import ReportGenerator from './src/services/ReportGenerator';
-import ScheduleService from './src/services/ScheduleService';
-import FreeUserRepository from './src/repositories/FreeUserRepository';
-import FreeUserDao from './src/daos/FreeUserDao';
+import AirgramClient from './model/AirgramClient';
+import UserMapper from './mappers/UserMapper';
+import ReportGenerator from './services/ReportGenerator';
+import ScheduleService from './services/ScheduleService';
+import FreeUserRepository from './repositories/FreeUserRepository';
+import FreeUserDao from './daos/FreeUserDao';
 import bodyParser from 'body-parser';
-import StatsDao from './src/daos/StatsDao';
+import StatsDao from './daos/StatsDao';
 
 const delay = (n) => {
   n = n || 2000;

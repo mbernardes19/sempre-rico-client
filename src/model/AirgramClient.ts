@@ -26,7 +26,7 @@ export default class AirgramClient implements TelegramClient {
         const res = await this._airgram.api.getSupergroupMembers({supergroupId: channelId, limit: 100})
         if (res.response._ === 'chatMembers') {
             return res.response.members.map(member => {
-                console.log(member.userId, member.joinedChatDate)
+                console.log(member.userId)
                 return { userId: member.userId, joinedIn: member.joinedChatDate !== 0 ? fromUnixTime(member.joinedChatDate) : null }
             })
         } else {
