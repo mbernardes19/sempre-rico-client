@@ -42,6 +42,10 @@ export default class AirgramClient implements TelegramClient {
         })
     }
 
+    async sendMesageToUser(userId: number, message: string) {
+        await this._airgram.api.sendMessage({chatId: userId, inputMessageContent: {_: 'inputMessageText', text: { _: 'formattedText', text: message}}})
+    }
+
     async sendMessageToChannel(channelId: number, message: string) {
         await this._airgram.api.sendMessage({chatId: channelId, inputMessageContent: {_: 'inputMessageText', text: { _: 'formattedText', text: message}}})
     }

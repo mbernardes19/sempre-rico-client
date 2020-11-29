@@ -32,7 +32,8 @@ app.use(bodyParser.json());
 
   const userMapper = new UserMapper();
   const freeUserRepository = new FreeUserRepository(userDao, userMapper)
-  const reportGenerator = new ReportGenerator(airgramClient, freeUserRepository, statsDao, 1386340547, 1386340547);
+  const reportGeneratorRicoVidente = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_RICO_VIDENTE), 1145065581);
+  const reportGeneratorSinaisRicos = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_SINAIS_RICOS), 1145065581);
   console.log('START')
 
 app.post('/bot', async (req, res) => {
@@ -46,20 +47,30 @@ app.post('/bot', async (req, res) => {
     reason: req.body.reason
   })
 })
-  await reportGenerator.start();
+  await reportGeneratorRicoVidente.start();
+  await reportGeneratorSinaisRicos.start();
   await delay(30000);
-  await reportGenerator.sendReport();
-  // await reportGenerator.sendEnteringAndLeavingUsers()
-  // await reportGenerator.sendUsersWithAtLeastSevenDaysInChannel()
-  // await reportGenerator.sendLeavingUsersWithLessThanSevenDaysInChannel()
-  // scheduleService.schedule('0 0 * * *', async () => {
-  //   await reportGenerator.start();
-  //   console.log('COMECOU')
-  // })
-  // scheduleService.schedule('59 23 * * *', async () => {
-  //   await reportGenerator.sendEnteringAndLeavingUsers();
-  //   console.log('FINALIZOU')
-  // })
+  await reportGeneratorRicoVidente.sendReport();
+  await reportGeneratorSinaisRicos.sendReport();
+
+  scheduleService.schedule('0 0 * * *', async () => {
+    try {
+      await reportGeneratorRicoVidente.start();
+      await reportGeneratorSinaisRicos.start();
+      console.log('COMECOU')
+    } catch(err) {
+      console.log(err)
+    }
+  })
+  scheduleService.schedule('59 23 * * *', async () => {
+    try {
+      await reportGeneratorRicoVidente.sendReport();
+      await reportGeneratorSinaisRicos.sendReport();
+    } catch (err) {
+      console.log(err)
+    }
+    console.log('FINALIZOU')
+  })
   console.log('ENVIADOS')
 })()
 
