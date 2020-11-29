@@ -1,5 +1,7 @@
 import mysql from 'mysql2/promise';
 import { Connection } from 'mysql2/promise';
+import dotenv from 'dotenv';
+dotenv.config()
 
 let connection: Connection;
 

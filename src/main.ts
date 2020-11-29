@@ -32,8 +32,8 @@ app.use(bodyParser.json());
 
   const userMapper = new UserMapper();
   const freeUserRepository = new FreeUserRepository(userDao, userMapper)
-  const reportGeneratorRicoVidente = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_RICO_VIDENTE), 1145065581);
-  const reportGeneratorSinaisRicos = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_SINAIS_RICOS), 1145065581);
+  const reportGeneratorRicoVidente = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_RICO_VIDENTE), [1145065581, 923769783]);
+  const reportGeneratorSinaisRicos = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_SINAIS_RICOS), [1145065581, 923769783]);
   console.log('START')
 
 app.post('/bot', async (req, res) => {

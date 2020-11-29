@@ -7,13 +7,13 @@ export default class ReportGenerator {
     private _reportData: ReportDataGenerator;
     private _airgramClient: AirgramClient;
     private _channelId: number;
-    private _chatIdToSend: number;
+    private _chatIdsToSend: number[];
 
-    constructor(airgramClient: AirgramClient, freeUserRepository: FreeUserRepository, statsDao: StatsDao, channelId: number, chatIdToSend: number) {
+    constructor(airgramClient: AirgramClient, freeUserRepository: FreeUserRepository, statsDao: StatsDao, channelId: number, chatIdsToSend: number[]) {
         this._airgramClient = airgramClient;
         this._reportData = new ReportDataGenerator(airgramClient, freeUserRepository, statsDao, channelId);
         this._channelId = channelId;
-        this._chatIdToSend = chatIdToSend;
+        this._chatIdsToSend = chatIdsToSend;
     }
 
     private async enteringUsers() {
@@ -53,7 +53,15 @@ ${await this.usersWithAtLeastSevenDaysInChannel()}
 ${await this.leavingUsersWithLessThanSevenDaysInChannel()}
 ${await this.botConversationsStats()}
         `
-        await this._airgramClient.sendMesageToUser(this._chatIdToSend, report)
+        const asyncActions = []
+        this._chatIdsToSend.map(chatId => {
+            asyncActions.push(this._airgramClient.sendMesageToUser(chatId, report))
+        })
+        try {
+            await Promise.all(asyncActions)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     async start() {
