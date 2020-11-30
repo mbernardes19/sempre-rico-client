@@ -47,21 +47,29 @@ app.post('/bot', async (req, res) => {
     reason: req.body.reason
   })
 })
-  await reportGeneratorRicoVidente.start();
-  await reportGeneratorSinaisRicos.start();
-  await delay(30000);
-  await reportGeneratorRicoVidente.sendReport();
-  await reportGeneratorSinaisRicos.sendReport();
+  // await reportGeneratorRicoVidente.start();
+  // await reportGeneratorSinaisRicos.start();
+  // await delay(30000);
+  // await reportGeneratorRicoVidente.sendReport();
+  // await reportGeneratorSinaisRicos.sendReport();
 
-  scheduleService.schedule('0 0 * * *', async () => {
-    try {
-      await reportGeneratorRicoVidente.start();
-      await reportGeneratorSinaisRicos.start();
-      console.log('COMECOU')
-    } catch(err) {
-      console.log(err)
-    }
-  })
+  try {
+    await reportGeneratorRicoVidente.start();
+    await reportGeneratorSinaisRicos.start();
+    console.log('COMECOU')
+  } catch(err) {
+    console.log(err)
+  }
+
+  // scheduleService.schedule('0 0 * * *', async () => {
+  //   try {
+  //     await reportGeneratorRicoVidente.start();
+  //     await reportGeneratorSinaisRicos.start();
+  //     console.log('COMECOU')
+  //   } catch(err) {
+  //     console.log(err)
+  //   }
+  // })
   scheduleService.schedule('59 23 * * *', async () => {
     try {
       await reportGeneratorRicoVidente.sendReport();
