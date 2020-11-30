@@ -18,8 +18,12 @@ export default class FreeUserDao extends GenericDao<FreeUserDto> {
     }
 
     async getAllUsersIds(): Promise<FreeUserIdDto[]> {
-        const [res] = await this._connection.query<FreeUserIdDto[]>(`SELECT id FROM UsuarioGratuito`);
-        return res;
+        try {
+            const [res] = await this._connection.query<FreeUserIdDto[]>(`SELECT id FROM UsuarioGratuito`);
+            return res;
+        } catch (err) {
+            console.log(new Date(), err)
+        }
     }
 }
 
