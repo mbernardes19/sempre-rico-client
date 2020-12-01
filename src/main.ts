@@ -46,6 +46,7 @@ app.post('/bot', async (req, res) => {
     finished: req.body.finished ? 'S' : 'N',
     reason: req.body.reason
   })
+  res.status(200).send()
 })
   // await reportGeneratorRicoVidente.start();
   // await reportGeneratorSinaisRicos.start();
