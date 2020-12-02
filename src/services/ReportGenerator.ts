@@ -59,6 +59,7 @@ ${await this.botConversationsStats()}
         })
         try {
             await Promise.all(asyncActions)
+            await this.clearBotConverationStats()
         } catch (err) {
             console.log(err)
         }
@@ -70,5 +71,9 @@ ${await this.botConversationsStats()}
 
     private async getChannelTitle() {
         return await this._airgramClient.getChannelTitle(this._channelId)
+    }
+
+    private async clearBotConverationStats() {
+        await this._reportData.clearAllBotConversationStats();
     }
 }
