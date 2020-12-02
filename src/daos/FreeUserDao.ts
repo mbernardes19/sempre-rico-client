@@ -1,10 +1,11 @@
 import { Connection } from 'mysql2/promise';
-import GenericDao from './GenericDao';
+import Dao from './Dao';
 import FreeUserDto, {FreeUserIdDto} from '../model/FreeUserDto';
 
-export default class FreeUserDao extends GenericDao<FreeUserDto> {
+export default class FreeUserDao implements Dao<FreeUserDto> {
+    private _connection: Connection;
     constructor(connection: Connection) {
-        super(connection);
+        this._connection = connection;
     }
 
     async findAll(): Promise<FreeUserDto[]> {
