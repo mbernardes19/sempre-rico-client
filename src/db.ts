@@ -1,9 +1,19 @@
 import mysql from 'mysql2/promise';
 import { Connection } from 'mysql2/promise';
 import dotenv from 'dotenv';
+import { MongoClient, Collection } from 'mongodb';
 dotenv.config()
 
 let connection: Connection;
+let mongoStatsCollection: Collection; 
+
+async function connectMongo() {
+  const client = await MongoClient.connect(`${process.env.MONGO_CONNECTION_STRING}/${process.env.MONGO_DATABASE}`, {useNewUrlParser: true, useUnifiedTopology: true})
+  const db = client.db('bot01')
+  mongoStatsCollection = db.collection('stats')
+}
+
+
 
 async function handleDisconnect() {
     connection = await mysql.createConnection({
@@ -30,4 +40,5 @@ async function handleDisconnect() {
     });
   }
 
-  export {handleDisconnect, connection}
+
+  export {handleDisconnect, connection, connectMongo, mongoStatsCollection}

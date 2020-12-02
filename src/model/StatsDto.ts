@@ -1,7 +1,5 @@
-import { RowDataPacket } from "mysql2";
-
-export default interface StatsDto extends RowDataPacket {
-    id: number,
+export default interface StatsDto {
+    id?: number,
     type: string
 }
 

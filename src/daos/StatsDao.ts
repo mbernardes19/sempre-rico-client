@@ -1,34 +1,33 @@
-import { Connection } from 'mysql2/promise';
-import GenericDao from './GenericDao';
+import { Collection } from 'mongodb';
+import Dao from './Dao';
 import StatsDto, {BotConversationStatsDto} from '../model/StatsDto';
 
-export default class StatsDao extends GenericDao<StatsDto> {
-    constructor(connection: Connection) {
-        super(connection);
+
+export default class StatsDao implements Dao<StatsDto> {
+    private _collection: Collection<StatsDto|BotConversationStatsDto>;
+    constructor(collection: Collection) {
+        this._collection = collection;
     }
 
+
     async findAll(): Promise<StatsDto[]> {
-        const [res] = await this._connection.query<StatsDto[]>('SELECT * FROM Stats')
-        return res;
+        return await this._collection.find().toArray()
     }
 
     async findOne(id: number): Promise<StatsDto> {
-        const [res] = await this._connection.query<StatsDto[]>(`SELECT * FROM Stats WHERE id = ${id}`)
-        return res[0];
+        return await this._collection.findOne({id: id})
     }
 
     async addBotConversationStats(botConversationStatsDto: BotConversationStatsDto): Promise<void> {
-        const { type, userId, finished, reason } = botConversationStatsDto;
-        await this._connection.query<BotConversationStatsDto[]>(`INSERT INTO Stats (type, userId, finished, reason) VALUES ('${type}', ${userId}, '${finished}', '${reason}')`)      
+        await this._collection.insertOne(botConversationStatsDto)
     }
 
     async getAllBotConversationStats(): Promise<BotConversationStatsDto[]> {
-        const [res] = await this._connection.query<BotConversationStatsDto[]>(`SELECT * FROM Stats where type='BOT_CONVERSATION'`)
-        return res;
+        return await this._collection.find().toArray() as BotConversationStatsDto[]
     }
 
     async clearAllBotConversationStats(): Promise<void> {
-        const [res] = await this._connection.query<BotConversationStatsDto[]>(`DELETE FROM Stats where type='BOT_CONVERSATION'`)
+        await this._collection.deleteMany({type: 'BOT_CONVERSATION'})
     }
 
 
