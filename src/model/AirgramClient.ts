@@ -1,5 +1,5 @@
 import TelegramClient from "./TelegramClient";
-import { Airgram, Auth, ChatMember } from "airgram";
+import { Airgram, Auth, ChatMember, prompt } from "airgram";
 import { TelegramChatMember } from "./Telegram";
 import { fromUnixTime } from 'date-fns';
 
