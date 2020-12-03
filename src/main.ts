@@ -7,6 +7,7 @@ import FreeUserRepository from './repositories/FreeUserRepository';
 import FreeUserDao from './daos/FreeUserDao';
 import bodyParser from 'body-parser';
 import StatsDao from './daos/StatsDao';
+import { mongoStatsCollection, connectMongo } from './db';
 
 const delay = (n) => {
   n = n || 2000;
@@ -23,10 +24,11 @@ app.use(bodyParser.json());
 
 
 (async () => {
+  await connectMongo();
   const scheduleService = new ScheduleService();
   const airgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.so")
   const userDao = new FreeUserDao();
-  const statsDao = new StatsDao();
+  const statsDao = new StatsDao(mongoStatsCollection);
 
   const userMapper = new UserMapper();
   const freeUserRepository = new FreeUserRepository(userDao, userMapper)

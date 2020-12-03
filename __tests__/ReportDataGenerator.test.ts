@@ -1,11 +1,11 @@
 import ReportDataGenerator from "../src/services/ReportDataGenerator";
-import { connection } from '../db';
 import UserMapper from "../src/mappers/UserMapper";
 import AirgramClient from "../src/model/AirgramClient";
 import FreeUserRepository from "../src/repositories/FreeUserRepository";
 import FreeUserDao from "../src/daos/FreeUserDao";
 import StatsDao from "../src/daos/StatsDao";
 import { TelegramChatMember } from "../src/model/Telegram";
+import { mongoStatsCollection } from '../src/db'
 
 jest.mock('airgram')
 jest.mock('../src/model/AirgramClient')
@@ -13,8 +13,8 @@ jest.mock('../src/daos/FreeUserDao')
 jest.mock('../src/repositories/FreeUserRepository')
 
 let reportDataGenerator: ReportDataGenerator;
-const mockedDao = new FreeUserDao(connection) as jest.Mocked<FreeUserDao>;
-const mockedStatsDao = new StatsDao(connection) as jest.Mocked<StatsDao>;
+const mockedDao = new FreeUserDao() as jest.Mocked<FreeUserDao>;
+const mockedStatsDao = new StatsDao(mongoStatsCollection) as jest.Mocked<StatsDao>;
 const mapper = new UserMapper();
 const mockedAirgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.dylib") as jest.Mocked<AirgramClient>
 const mockedFreeUserRepository = new FreeUserRepository(mockedDao, mapper) as jest.Mocked<FreeUserRepository>
