@@ -1,5 +1,4 @@
 import express from 'express'
-import { handleDisconnect, connection, connectMongo, mongoStatsCollection } from './db';
 import AirgramClient from './model/AirgramClient';
 import UserMapper from './mappers/UserMapper';
 import ReportGenerator from './services/ReportGenerator';
@@ -24,12 +23,10 @@ app.use(bodyParser.json());
 
 
 (async () => {
-  await handleDisconnect()
-  await connectMongo()
   const scheduleService = new ScheduleService();
   const airgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.so")
-  const userDao = new FreeUserDao(connection);
-  const statsDao = new StatsDao(mongoStatsCollection);
+  const userDao = new FreeUserDao();
+  const statsDao = new StatsDao();
 
   const userMapper = new UserMapper();
   const freeUserRepository = new FreeUserRepository(userDao, userMapper)
