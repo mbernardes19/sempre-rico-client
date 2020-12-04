@@ -4,6 +4,11 @@ import { TelegramChatMember } from "./Telegram";
 import { fromUnixTime } from 'date-fns';
 
 
+export type UserInfo = {
+    fullName: string,
+    username: string       
+}
+
 export default class AirgramClient implements TelegramClient {
     private _airgram: Airgram;
 
@@ -63,6 +68,13 @@ export default class AirgramClient implements TelegramClient {
         const res = await this._airgram.api.getChatMember({chatId: chatId, userId: userId})
         if (res.response._ === 'chatMember') {
             return { userId: res.response.userId, joinedIn: res.response.joinedChatDate !== 0 ? fromUnixTime(res.response.joinedChatDate) : null}
+        }
+    }
+
+    async getUserInfo(userId: number): Promise<UserInfo> {
+        const res = await this._airgram.api.getUser({userId})
+        if (res.response._ === 'user') {
+            return { fullName: res.response.firstName + " " + res.response.lastName, username: res.response.username }
         }
     }
 }

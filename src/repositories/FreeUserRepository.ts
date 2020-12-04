@@ -14,6 +14,5 @@ export default class FreeUserRepository {
         const usersIds = await this._dao.getAllUsersIds()
         return usersIds.map(userId => userId.id);
     }
-
     
 }

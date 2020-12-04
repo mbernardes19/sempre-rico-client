@@ -1,4 +1,4 @@
-import AirgramClient from "../model/AirgramClient";
+import AirgramClient, { UserInfo } from "../model/AirgramClient";
 import { differenceInCalendarDays } from "date-fns";
 import { TelegramChatMember } from "../model/Telegram";
 import FreeUserRepository from "../repositories/FreeUserRepository";
@@ -95,5 +95,13 @@ export default class ReportDataGenerator {
 
     async clearAllBotConversationStats() {
         await this._statsDao.clearAllBotConversationStats()
+    }
+
+    async getTelegramUsersInfo(telegramIds: number[]) {
+        const asyncActions = [];
+        telegramIds.forEach(id => {
+            asyncActions.push(this._airgramClient.getUserInfo(id))
+        })
+        return await Promise.all<UserInfo>(asyncActions)
     }
 }

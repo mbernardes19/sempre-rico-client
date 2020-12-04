@@ -2,6 +2,7 @@ import ReportDataGenerator from "./ReportDataGenerator";
 import AirgramClient from "../model/AirgramClient";
 import FreeUserRepository from "../repositories/FreeUserRepository";
 import StatsDao from "../daos/StatsDao";
+import { format } from "date-fns";
 
 export default class ReportGenerator {
     private _reportData: ReportDataGenerator;
@@ -18,34 +19,77 @@ export default class ReportGenerator {
 
     private async enteringUsers() {
         const enteringUsers = await this._reportData.getEnteringUsers()
-        return `Entraram: ${enteringUsers.length} usuários (${enteringUsers.map(user => user.userId.toString() + ", ")})`;
+        const userInfos = await this._reportData.getTelegramUsersInfo(enteringUsers.map(user => user.userId))
+        if (userInfos.length > 0) {
+            return `Entraram: ${enteringUsers.length}
+            ${userInfos.map(user => `${user.fullName}(@${user.username}), `)}
+            `;
+        } else {
+            return `Entraram: ${enteringUsers.length}
+            `;
+        }
     }
 
     private async leavingUsers() {
         const leavingUsers = await this._reportData.getLeavingUsers()
-        return `Saíram: ${leavingUsers.length} usuários (${leavingUsers.map(user => user.userId.toString() + ", ")})`;
+        const userInfos = await this._reportData.getTelegramUsersInfo(leavingUsers.map(user => user.userId))
+        if (userInfos.length > 0) {
+            return `Saíram: ${leavingUsers.length}
+            ${userInfos.map(user => `${user.fullName}(@${user.username}), `)}
+            `;
+        } else {
+            return `Saíram: ${leavingUsers.length}
+            `;
+        }
     }
 
     private async usersWithAtLeastSevenDaysInChannel() {
         const leavingUsers = await this._reportData.getLeavingUsers()
         const users = await this._reportData.getUsersWithAtLeastSevenDaysOfTimeInChannel(new Date(), leavingUsers)
-        return `Usuários com 7 ou mais dias no canal: ${users.length} (${users.map(user => user.toString() + ", ")})`;
+        const userInfos = await this._reportData.getTelegramUsersInfo(users)
+
+        if (userInfos.length > 0) {
+            return `Usuários com 7 ou mais dias no canal: ${users.length}
+            ${userInfos.map(user => `${user.fullName}(@${user.username}), `)}
+            `;
+        } else {
+            return `Usuários com 7 ou mais dias no canal: ${users.length}
+            `;
+        }
     }
 
     private async leavingUsersWithLessThanSevenDaysInChannel() {
         const leavingUsers = await this._reportData.getLeavingUsers()
         const users = await this._reportData.getLeavingUsersWithLessThanSevenDaysOfTimeInChannel(new Date(), leavingUsers)
-        return `Usuário que saíram com menos de 7 dias do canal: ${users.length} (${users.map(user => user.toString() + ", ")})`;
-    }
+        const userInfos = await this._reportData.getTelegramUsersInfo(users)
+
+        if (userInfos.length > 0) {
+            return `Usuário que saíram com menos de 7 dias do canal: ${users.length}
+            ${userInfos.map(user => `${user.fullName}(@${user.username}), `)}
+            `;
+        } else {
+            return `Usuário que saíram com menos de 7 dias do canal: ${users.length}
+            `;
+        }
+    } 
 
     private async botConversationsStats() {
         const botConversationStats = await this._reportData.getAllBotConversationStats()
-        return `Usuários que desistiram da conversa com o bot: ${botConversationStats.length} (${botConversationStats.map(c => c.reason !== 'ERROR' && c.reason !== 'SUCCESS' ? c.userId.toString() + ", " : '')})`;
+        const userInfos = await this._reportData.getTelegramUsersInfo(botConversationStats.map(botConversation => botConversation.userId))
+
+        if (userInfos.length > 0) {
+            return `Usuários que desistiram da conversa com o bot: ${botConversationStats.length}
+            ${botConversationStats.map((c, index) => c.reason !== 'ERROR' && c.reason !== 'SUCCESS' ? `${userInfos[index].fullName}(@${userInfos[index].username}), ` : '')}
+            `;
+        } else {
+            return `Usuários que desistiram da conversa com o bot: ${botConversationStats.length}
+            `;
+        }
     }
 
     async sendReport() {
         const channelTitle = await this.getChannelTitle();
-        const report = `RELATÓRIO DE USUÁRIOS GRATUITOS ${channelTitle.toUpperCase()} - ${new Date().toLocaleDateString()}
+        const report = `📋 RELATÓRIO DE USUÁRIOS GRATUITOS ${channelTitle.toUpperCase()} - ${format(new Date(), 'dd/MM/yyyy')}
 
 ${await this.enteringUsers()}
 ${await this.leavingUsers()}
