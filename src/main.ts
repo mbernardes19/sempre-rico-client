@@ -27,7 +27,7 @@ app.use(bodyParser.json());
 (async () => {
   await connectMongo();
   const scheduleService = new ScheduleService();
-  const airgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.dylib")
+  const airgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.so")
   const userDao = new FreeUserDao();
   const statsDao = new StatsDao(mongoStatsCollection);
 
