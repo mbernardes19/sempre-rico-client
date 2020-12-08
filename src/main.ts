@@ -8,6 +8,7 @@ import FreeUserDao from './daos/FreeUserDao';
 import bodyParser from 'body-parser';
 import StatsDao from './daos/StatsDao';
 import { mongoStatsCollection, connectMongo } from './db';
+import Logger from './services/Logger';
 
 const delay = (n) => {
   n = n || 2000;
@@ -26,7 +27,7 @@ app.use(bodyParser.json());
 (async () => {
   await connectMongo();
   const scheduleService = new ScheduleService();
-  const airgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.so")
+  const airgramClient = new AirgramClient(1485371, "662c661df7d0b41601f6cb8ae2ef35d6", "./libtdjson.dylib")
   const userDao = new FreeUserDao();
   const statsDao = new StatsDao(mongoStatsCollection);
 
@@ -34,10 +35,10 @@ app.use(bodyParser.json());
   const freeUserRepository = new FreeUserRepository(userDao, userMapper)
   const reportGeneratorRicoVidente = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_RICO_VIDENTE), [1145065581, 923769783]);
   const reportGeneratorSinaisRicos = new ReportGenerator(airgramClient, freeUserRepository, statsDao, parseInt(process.env.ID_CANAL_SINAIS_RICOS), [1145065581, 923769783]);
-  console.log('START')
+  Logger.info('START')
 
 app.post('/bot', async (req, res) => {
-  console.log(req.body);
+  Logger.info(req.body);
   await statsDao.addBotConversationStats({
     type: 'BOT_CONVERSATION',
     userId: req.body.chatId,
@@ -56,9 +57,9 @@ app.post('/bot', async (req, res) => {
   try {
     await reportGeneratorRicoVidente.start();
     await reportGeneratorSinaisRicos.start();
-    console.log('COMECOU')
+    Logger.info('COMECOU')
   } catch(err) {
-    console.log(err)
+    Logger.error('ERRO', err)
   }
 
   // scheduleService.schedule('0 0 * * *', async () => {
@@ -75,14 +76,14 @@ app.post('/bot', async (req, res) => {
       await reportGeneratorRicoVidente.sendReport();
       await reportGeneratorSinaisRicos.sendReport();
     } catch (err) {
-      console.log(err)
+      Logger.error('ERRO', err)
     }
-    console.log('FINALIZOU')
+    Logger.info('FINALIZOU')
   })
-  console.log('ENVIADOS')
+  Logger.info('ENVIADOS')
 })()
 
 
 
 
-app.listen(PORT, () => console.log(`Rodando na porta ${PORT}`))
+app.listen(PORT, () => Logger.info(`Rodando na porta ${PORT}`))

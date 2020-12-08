@@ -3,6 +3,7 @@ import AirgramClient from "../model/AirgramClient";
 import FreeUserRepository from "../repositories/FreeUserRepository";
 import StatsDao from "../daos/StatsDao";
 import { format } from "date-fns";
+import Logger from "./Logger";
 
 export default class ReportGenerator {
     private _reportData: ReportDataGenerator;
@@ -105,7 +106,7 @@ ${await this.botConversationsStats()}
             await Promise.all(asyncActions)
             await this.clearBotConverationStats()
         } catch (err) {
-            console.log(err)
+            Logger.error('ERRO', err)
         }
     }
 

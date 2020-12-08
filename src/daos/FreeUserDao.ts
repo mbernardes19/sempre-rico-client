@@ -2,6 +2,7 @@ import Dao from './Dao';
 import FreeUserDto, {FreeUserIdDto} from '../model/FreeUserDto';
 import { connectionPool } from '../db';
 import { Pool } from 'mysql2/promise';
+import Logger from '../services/Logger';
 
 export default class FreeUserDao implements Dao<FreeUserDto> {
     private _connectionPool: Pool
@@ -24,7 +25,7 @@ export default class FreeUserDao implements Dao<FreeUserDto> {
             const [res] = await this._connectionPool.query<FreeUserIdDto[]>(`SELECT id FROM UsuarioGratuito`);
             return res;
         } catch (err) {
-            console.log(new Date(), err)
+            Logger.error('ERRO', err)
         }
     }
 }

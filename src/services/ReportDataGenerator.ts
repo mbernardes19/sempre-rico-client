@@ -3,6 +3,7 @@ import { differenceInCalendarDays } from "date-fns";
 import { TelegramChatMember } from "../model/Telegram";
 import FreeUserRepository from "../repositories/FreeUserRepository";
 import StatsDao from "../daos/StatsDao";
+import Logger from "./Logger";
 
 export default class ReportDataGenerator {
     private _currentUserList: TelegramChatMember[] = [];
@@ -57,7 +58,7 @@ export default class ReportDataGenerator {
         try {
             usersTime = await Promise.all(asyncActions)
         } catch (err) {
-            console.log(err)
+            Logger.error('ERRO', err)
         }
 
         return usersTime;

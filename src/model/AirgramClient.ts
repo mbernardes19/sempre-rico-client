@@ -2,6 +2,7 @@ import TelegramClient from "./TelegramClient";
 import { Airgram, Auth, ChatMember, prompt } from "airgram";
 import { TelegramChatMember } from "./Telegram";
 import { fromUnixTime } from 'date-fns';
+import Logger from "../services/Logger";
 
 
 export type UserInfo = {
@@ -31,11 +32,11 @@ export default class AirgramClient implements TelegramClient {
         const res = await this._airgram.api.getSupergroupMembers({supergroupId: channelId, limit: 100})
         if (res.response._ === 'chatMembers') {
             return res.response.members.map(member => {
-                console.log(member.userId)
+                Logger.info(member.userId)
                 return { userId: member.userId, joinedIn: member.joinedChatDate !== 0 ? fromUnixTime(member.joinedChatDate) : null }
             })
         } else {
-            console.log(res.response.message)
+            Logger.info(res.response.message)
         }
     }
 
@@ -60,7 +61,7 @@ export default class AirgramClient implements TelegramClient {
         if (res.response._ === 'chat') {
             return res.response.title
         } else {
-            console.log(res.response.message);
+            Logger.info(res.response.message);
         }
     }
 
