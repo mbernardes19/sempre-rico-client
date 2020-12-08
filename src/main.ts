@@ -62,16 +62,16 @@ app.post('/bot', async (req, res) => {
     Logger.error('ERRO', err)
   }
 
-  // scheduleService.schedule('0 0 * * *', async () => {
-  //   try {
-  //     await reportGeneratorRicoVidente.start();
-  //     await reportGeneratorSinaisRicos.start();
-  //     console.log('COMECOU')
-  //   } catch(err) {
-  //     console.log(err)
-  //   }
-  // })
-  scheduleService.schedule('59 23 * * *', async () => {
+  scheduleService.schedule('0 0 * * 1-5', async () => {
+    try {
+      await reportGeneratorRicoVidente.start();
+      await reportGeneratorSinaisRicos.start();
+      Logger.info('COMECOU')
+    } catch(err) {
+      Logger.error('ERRO', err)
+    }
+  })
+  scheduleService.schedule('59 23 * * 1-5', async () => {
     try {
       await reportGeneratorRicoVidente.sendReport();
       await reportGeneratorSinaisRicos.sendReport();
